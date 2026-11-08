@@ -5,6 +5,7 @@ const schema = z.object({
  DATABASE_URL:z.string().url().optional(),
  BRIDGE_HMAC_SECRET:z.string().min(32).optional(),
  STRIPE_SECRET_KEY:z.string().optional(),
+ STRIPE_WEBHOOK_SECRET:z.string().optional(),
  SHOPIFY_STORE_DOMAIN:z.string().optional(),
  SHOPIFY_ADMIN_ACCESS_TOKEN:z.string().optional(),
  SHOPIFY_API_VERSION:z.string().default("2026-10"),
