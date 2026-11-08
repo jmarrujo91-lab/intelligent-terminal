@@ -1,0 +1,17 @@
+import express from "express";
+import {config} from "./config.js";
+import tracking from "./routes/tracking.js";
+import bridge from "./routes/bridge.js";
+import payments from "./routes/payments.js";
+import shopify from "./routes/shopify.js";
+import notion from "./routes/notion.js";
+export const app=express();
+app.disable("x-powered-by");
+app.use(express.json({limit:"256kb",verify:(req,_res,buf)=>{(req as express.Request).rawBody=Buffer.from(buf);}}));
+app.get("/health",(_req,res)=>res.json({ok:true,service:"commerce-bridge",environment:config.NODE_ENV,integrations:{stripeSandbox:!!config.STRIPE_SECRET_KEY,shopifyReadOnly:!!(config.SHOPIFY_STORE_DOMAIN&&config.SHOPIFY_ADMIN_ACCESS_TOKEN),notionReadOnly:!!(config.NOTION_API_KEY&&config.NOTION_DATABASE_ID),signedHandshake:!!config.BRIDGE_HMAC_SECRET}}));
+app.use("/api/v1/tracking",tracking);
+app.use("/api/v1/bridge",bridge);
+app.use("/api/v1/payments",payments);
+app.use("/api/v1/shopify",shopify);
+app.use("/api/v1/notion",notion);
+app.use((_req,res)=>res.status(404).json({error:"not_found"}));
