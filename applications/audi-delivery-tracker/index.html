@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#bb0a1e">
+<title>Audi Delivery Tracker</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#171717;background:#f4f5f7;line-height:1.5}
+*{box-sizing:border-box}body{margin:0;padding:24px 16px;max-width:1100px;margin-inline:auto}
+header{display:flex;align-items:center;gap:14px;margin-bottom:4px}.rings{width:112px;height:30px;flex:none}
+h1{font-size:clamp(20px,4vw,28px);margin:0}.subtitle{color:#666;font-size:13px;margin:5px 0 24px}
+nav{display:flex;overflow:auto;border-bottom:2px solid #ddd;margin-bottom:20px}
+nav button{white-space:nowrap;border:0;border-bottom:3px solid transparent;background:none;padding:12px 16px;color:#777;font-weight:650;cursor:pointer}
+nav button[aria-selected=true]{color:#bb0a1e;border-bottom-color:#bb0a1e}
+.panel[hidden]{display:none}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:14px}
+.card,.kpi{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:18px;margin-bottom:14px}
+.kpi-label,.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#777;font-weight:700}
+.kpi-value{font-size:21px;font-weight:750;margin-top:5px}.muted{color:#888}.small{font-size:12px;color:#777}
+.status{display:inline-block;padding:5px 12px;border-radius:20px;background:#fff3cd;color:#785600;font-size:12px;font-weight:700}
+.row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #eee;font-size:13px}.row:last-child{border:0}.row strong{text-align:right;overflow-wrap:anywhere}
+.alert{padding:13px 16px;border-radius:8px;margin:14px 0;font-size:13px;background:#fff8e1;border:1px solid #ffe082;color:#705900}
+.info{background:#eaf2ff;border-color:#bfd5ff;color:#194b91}
+.timeline{border-left:2px solid #ddd;margin:8px 0 0 8px;padding-left:22px}.event{position:relative;padding:0 0 22px}.event:before{content:"";position:absolute;width:12px;height:12px;border:2px solid #bbb;background:white;border-radius:50%;left:-30px;top:4px}.event.done:before{background:#bb0a1e;border-color:#bb0a1e}.event.active:before{border-color:#e0a12d;box-shadow:0 0 0 3px #f8e9c8}
+label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;color:#555;margin:12px 0 6px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid #d7d7d7;border-radius:8px;background:#fff;font:inherit;font-size:14px}
+textarea{min-height:85px;resize:vertical}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+button.action{border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;background:#bb0a1e;color:#fff}
+button.secondary{background:#e7e7e7;color:#222}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9bbcff;outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-size:13px;display:block;overflow-x:auto}th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #eee;white-space:nowrap}th{color:#777;font-size:11px;text-transform:uppercase}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#202333;color:#e4e8f5;padding:16px;border-radius:9px;font-size:12px}
+footer{font-size:11px;color:#888;padding:8px 0 20px}
+@media(max-width:560px){body{padding:16px 10px}.rings{width:76px}.row{align-items:flex-start}.row strong{max-width:58%}}
+</style>
+</head>
+<body>
+<header><svg class="rings" viewBox="0 0 200 50" role="img" aria-label="Four interlocking rings"><g fill="none" stroke="#333" stroke-width="3"><circle cx="30" cy="25" r="18"/><circle cx="75" cy="25" r="18"/><circle cx="120" cy="25" r="18"/><circle cx="165" cy="25" r="18"/></g></svg><h1>Audi Delivery Tracker</h1></header>
+<p class="subtitle">Marrujo Global Legal Enterprises LLC · Handoff: November 9, 2026</p>
+<nav aria-label="Tracker sections" role="tablist">
+<button role="tab" aria-selected="true" aria-controls="overview" data-tab="overview">Overview</button>
+<button role="tab" aria-selected="false" aria-controls="timeline" data-tab="timeline">Timeline</button>
+<button role="tab" aria-selected="false" aria-controls="dealer" data-tab="dealer">Dealer Updates</button>
+<button role="tab" aria-selected="false" aria-controls="carrier" data-tab="carrier">Carrier Info</button>
+<button role="tab" aria-selected="false" aria-controls="export" data-tab="export">Export</button>
+</nav>
+<main>
+<section id="overview" class="panel" role="tabpanel">
+<div class="grid">
+<div class="kpi"><div class="kpi-label">Status</div><div class="kpi-value"><span class="status" id="status-summary">Pending Verification</span></div></div>
+<div class="kpi"><div class="kpi-label">Estimated Arrival</div><div class="kpi-value" id="eta-summary">TBD</div><div class="small">No carrier ETA established</div></div>
+<div class="kpi"><div class="kpi-label">Confirmed Arrival</div><div class="kpi-value" id="arrival-summary">—</div><div class="small">Awaiting dealer confirmation</div></div>
+<div class="kpi"><div class="kpi-label">Dealer Updates</div><div class="kpi-value" id="updates-summary">0</div><div class="small">Recorded locally in this browser</div></div>
+</div>
+<div class="card"><div class="eyebrow">Vehicle Identification</div>
+<div class="row"><span>Vehicle</span><strong>Audi</strong></div><div class="row"><span>VIN</span><strong>WU1ARBF15VD016185</strong></div><div class="row"><span>Delivery Reference</span><strong>563967598</strong></div><div class="row"><span>Dealer</span><strong>Audi Burlingame</strong></div>
+</div>
+<div class="alert"><strong>Verification required:</strong> Reference 563967598 is recorded as a delivery reference, not a verified carrier tracking number. No carrier, shipment scans, ETA, or receiving date have been independently established.</div>
+<div class="card"><div class="eyebrow">Project Information</div><div class="row"><span>Project Owner</span><strong>Marrujo Global Legal Enterprises LLC</strong></div><div class="row"><span>Handoff Date</span><strong>2026-11-09</strong></div><div class="row"><span>Disposition</span><strong>Prototype — Production Pending</strong></div></div>
+</section>
+<section id="timeline" class="panel" role="tabpanel" hidden>
+<div class="card"><div class="eyebrow">Delivery Milestones</div><div class="timeline" id="timeline-list">
+<div class="event done"><strong>Order Placed</strong><div class="small">Recorded · Vehicle order associated with supplied VIN</div></div>
+<div class="event done"><strong>Delivery Reference Assigned</strong><div class="small">Recorded · 563967598 (carrier tracking not verified)</div></div>
+<div class="event active"><strong>Carrier Pickup &amp; Transit</strong><div class="small">Pending verification and shipment scans</div></div>
+<div class="event"><strong>Estimated Arrival at Dealer</strong><div class="small">TBD · Requires verified carrier information</div></div>
+<div class="event"><strong>Dealer Receiving Confirmation</strong><div class="small" id="timeline-receiving">TBD · Awaiting dealer confirmation</div></div>
+<div class="event"><strong>Customer Delivery</strong><div class="small">TBD · Final handoff not recorded</div></div></div></div>
+<div class="card"><div class="eyebrow">Estimated vs. Confirmed Dates</div><div class="row"><span>Estimated Arrival</span><strong class="muted">Not established</strong></div><div class="row"><span>Confirmed Arrival</span><strong id="confirmed-date">Not confirmed</strong></div><div class="row"><span>Variance</span><strong class="muted">N/A</strong></div></div>
+</section>
+<section id="dealer" class="panel" role="tabpanel" hidden>
+<div class="alert info">Prototype note: updates are stored in this browser only. Production dealer updates require authenticated server-side access, authorization, and an auditable database history.</div>
+<div class="card"><div class="eyebrow">Record Receiving Date</div>
+<form id="update-form">
+<label for="recv-date">Receiving Date</label><input id="recv-date" type="date" required>
+<label for="recv-status">Status</label><select id="recv-status" required><option value="">Select status…</option><option>Vehicle Received — Inspection Pending</option><option>Vehicle Received — Inspection Complete</option><option>Vehicle Ready for Customer Pickup</option><option>Customer Delivery Complete</option></select>
+<label for="recv-notes">Notes</label><textarea id="recv-notes" maxlength="1000" placeholder="Delivery condition, inspection results, or dealer confirmation details"></textarea>
+<div class="actions"><button class="action" type="submit">Save Update</button><button class="action secondary" type="reset">Clear</button></div></form></div>
+<div class="card"><div class="eyebrow">Dealer Update History</div><div id="history-empty" class="small">No updates recorded.</div><table id="history-table" hidden><thead><tr><th>Date</th><th>Status</th><th>Notes</th></tr></thead><tbody id="history-body"></tbody></table></div>
+</section>
+<section id="carrier" class="panel" role="tabpanel" hidden>
+<div class="alert">Carrier integration is not connected. The values below are deliberately unpopulated until verified from an authorized carrier or dealer source.</div>
+<div class="card"><div class="eyebrow">Carrier Details</div><div class="row"><span>Carrier Name</span><strong class="muted">Not verified</strong></div><div class="row"><span>Tracking Number</span><strong class="muted">Pending verification</strong></div><div class="row"><span>Delivery Reference</span><strong>563967598</strong></div><div class="row"><span>Origin</span><strong class="muted">Not provided</strong></div><div class="row"><span>Destination</span><strong>Audi Burlingame</strong></div><div class="row"><span>Last Scan</span><strong class="muted">No scans</strong></div><div class="row"><span>Estimated Delivery</span><strong class="muted">TBD</strong></div></div>
+<div class="card"><div class="eyebrow">Shipment Scan History</div><p class="small">No shipment scans available. Carrier events will appear here after a verified carrier integration is implemented.</p></div>
+</section>
+<section id="export" class="panel" role="tabpanel" hidden>
+<div class="card"><div class="eyebrow">JSON Data Export</div><p class="small">Export the current tracker state, including dealer updates stored in this browser.</p><pre id="json-preview"></pre><div class="actions"><button class="action" id="download-json" type="button">Download JSON</button><button class="action secondary" id="copy-json" type="button">Copy JSON</button></div></div>
+</section>
+</main>
+<footer>Prototype only · No live carrier feed, dealer authentication, or production database is connected.</footer>
+<script>
+(() => {
+'use strict';
+const KEY='audi-delivery-tracker:v1';
+const vehicle={make:'Audi',vin:'WU1ARBF15VD016185',deliveryReference:'563967598',dealer:'Audi Burlingame',inventoryUrl:'https://www.audiburlingame.com/en/inventory/vehicle/?isdealer&market=us&vehicleId=WU1ARBF15VD016185'};
+const initial={vehicle,projectOwner:'Marrujo Global Legal Enterprises LLC',handoffDate:'2026-11-09',tracking:{status:'Pending Verification',carrierVerified:false,carrierName:null,trackingNumber:null,estimatedArrival:null,confirmedArrival:null,shipmentScans:[]},dealerUpdates:[]};
+let state=load();
+function load(){try{const raw=localStorage.getItem(KEY);if(!raw)return structuredClone(initial);const saved=JSON.parse(raw);return {...initial,...saved,vehicle,tracking:{...initial.tracking,...saved.tracking},dealerUpdates:Array.isArray(saved.dealerUpdates)?saved.dealerUpdates:[]};}catch{return structuredClone(initial);}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch{alert('Could not save in this browser. Export the data before closing this page.');}}
+function data(){return {...state,exportedAt:new Date().toISOString()};}
+function render(){
+document.getElementById('status-summary').textContent=state.tracking.status;
+document.getElementById('eta-summary').textContent=state.tracking.estimatedArrival||'TBD';
+document.getElementById('arrival-summary').textContent=state.tracking.confirmedArrival||'—';
+document.getElementById('updates-summary').textContent=state.dealerUpdates.length;
+document.getElementById('confirmed-date').textContent=state.tracking.confirmedArrival||'Not confirmed';
+document.getElementById('timeline-receiving').textContent=state.tracking.confirmedArrival?'Received '+state.tracking.confirmedArrival:'TBD · Awaiting dealer confirmation';
+const body=document.getElementById('history-body');body.replaceChildren();
+state.dealerUpdates.slice().reverse().forEach(u=>{const tr=document.createElement('tr');[u.date,u.status,u.notes||'—'].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});body.append(tr);});
+document.getElementById('history-empty').hidden=state.dealerUpdates.length>0;
+document.getElementById('history-table').hidden=state.dealerUpdates.length===0;
+document.getElementById('json-preview').textContent=JSON.stringify(data(),null,2);
+}
+document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b===btn)));
+document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!==btn.dataset.tab);
+if(btn.dataset.tab==='export')render();
+}));
+document.getElementById('update-form').addEventListener('submit',e=>{
+e.preventDefault();const date=document.getElementById('recv-date').value,status=document.getElementById('recv-status').value,notes=document.getElementById('recv-notes').value.trim();
+if(!date||!status)return;
+state.dealerUpdates.push({date,status,notes,recordedAt:new Date().toISOString()});
+if(status.startsWith('Vehicle Received'))state.tracking.confirmedArrival=date;
+state.tracking.status=status;persist();render();e.target.reset();alert('Update saved in this browser. It has not been sent to the dealer or a server.');
+});
+document.getElementById('download-json').addEventListener('click',()=>{
+const blob=new Blob([JSON.stringify(data(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='audi-delivery-tracker.json';a.click();URL.revokeObjectURL(url);
+});
+document.getElementById('copy-json').addEventListener('click',async()=>{
+try{await navigator.clipboard.writeText(JSON.stringify(data(),null,2));alert('JSON copied.');}catch{alert('Clipboard unavailable. Use Download JSON instead.');}
+});
+render();
+})();
+</script>
+</body></html>
